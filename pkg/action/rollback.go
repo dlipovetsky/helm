@@ -19,6 +19,7 @@ package action
 import (
 	"bytes"
 	"fmt"
+	"os"
 	"strings"
 	"time"
 
@@ -73,6 +74,11 @@ func (r *Rollback) Run(name string) error {
 		if err := r.cfg.Releases.Create(targetRelease); err != nil {
 			return err
 		}
+	}
+
+	if os.Getenv("HELM_INTERRUPT_ROLLBACK") != "" {
+		r.cfg.Log("rollback: Interrupting rollback")
+		panic("rollback: Interrupting rollback")
 	}
 
 	r.cfg.Log("performing rollback of %s", name)

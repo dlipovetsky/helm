@@ -406,6 +406,11 @@ func (i *Install) RunWithContext(ctx context.Context, chrt *chart.Chart, vals ma
 		return rel, err
 	}
 
+	if os.Getenv("HELM_INTERRUPT_INSTALL") != "" {
+		i.cfg.Log("install: Interrupting install")
+		panic("install: Interrupting install")
+	}
+
 	rel, err = i.performInstallCtx(ctx, rel, toBeAdopted, resources)
 	if err != nil {
 		rel, err = i.failRelease(rel, err)

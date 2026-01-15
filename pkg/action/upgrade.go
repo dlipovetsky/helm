@@ -20,6 +20,7 @@ import (
 	"bytes"
 	"context"
 	"fmt"
+	"os"
 	"strings"
 	"sync"
 	"time"
@@ -376,6 +377,12 @@ func (u *Upgrade) performUpgrade(ctx context.Context, originalRelease, upgradedR
 	if err := u.cfg.Releases.Create(upgradedRelease); err != nil {
 		return nil, err
 	}
+
+	if os.Getenv("HELM_INTERRUPT_UPGRADE") != "" {
+		u.cfg.Log("upgrade: Interrupting upgrade")
+		panic("upgrade: Interrupting upgrade")
+	}
+
 	rChan := make(chan resultMessage)
 	ctxChan := make(chan resultMessage)
 	doneChan := make(chan interface{})

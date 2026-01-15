@@ -17,6 +17,7 @@ limitations under the License.
 package action
 
 import (
+	"os"
 	"strings"
 	"time"
 
@@ -117,6 +118,11 @@ func (u *Uninstall) Run(name string) (*release.UninstallReleaseResponse, error) 
 	// state.
 	if err := u.cfg.Releases.Update(rel); err != nil {
 		u.cfg.Log("uninstall: Failed to store updated release: %s", err)
+	}
+
+	if os.Getenv("HELM_INTERRUPT_UNINSTALL") != "" {
+		u.cfg.Log("uninstall: Interrupting uninstall")
+		panic("uninstall: Interrupting uninstall")
 	}
 
 	deletedResources, kept, errs := u.deleteRelease(rel)
